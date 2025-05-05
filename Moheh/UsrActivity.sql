@@ -1,5 +1,5 @@
 select
-date("Date") as date1
+to_char("Date", 'DD-MM-YYYY') as date1
 , e."Name"
 , "Queue"
 , count(*)
