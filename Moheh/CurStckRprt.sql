@@ -7,8 +7,10 @@ sd."SKUName"
 , date(b."ManufactureDate") as proizv
 , date(b."BestBefore") as sg
 , sd."Quantity"
-, sd."Quantity" / p."pckg"
-, sd."LocationParentName"
+, sd."Quantity" / p."pckg" as pckgq
+, case
+  when sd."LocationParentName" = '' then sd."LocationName"
+  else sd."LocationParentName" end as yach
 , sd."LocationName"
 , sd."ZoneName"
 from stockdatamart sd
@@ -23,3 +25,4 @@ left join (select
 	END AS pckg
 from package p
 group by "SKU") as p on p."SKU" = sd."SKUUUID"
+where sd."SKUArticle" != 'PredefinedSKU'
