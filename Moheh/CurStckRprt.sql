@@ -4,8 +4,8 @@ sd."SKUName"
 , sd."StatusName"
 , sd."BatchName"
 , b."Number"
-, date(b."ManufactureDate") as proizv
-, date(b."BestBefore") as sg
+, to_char(b."ManufactureDate", 'DD-MM-YY') as proizv
+, to_char(b."BestBefore", 'DD-MM-YY') as sg
 , sd."Quantity"
 , sd."Quantity" / p."pckg" as pckgq
 , case
