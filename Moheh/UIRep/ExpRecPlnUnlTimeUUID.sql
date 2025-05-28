@@ -22,7 +22,7 @@ from minmaxtime)
 
 select
 	--"IncomeDate"
-	, "IncomeDate" + (select "avg_bgn_time" from tmpcalc) as exp_bgn
+	"IncomeDate" + (select "avg_bgn_time" from tmpcalc) as exp_bgn
 	, "IncomeDate" + (select "avg_end_time" from tmpcalc) as exp_end
 from expectedreceipt
 where "uuid" = @UUIDS
