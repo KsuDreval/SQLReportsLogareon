@@ -70,3 +70,4 @@ select
 		else d."ArrivalTime" end + (select avg_dep from tmpcalcdep) as exp_dep
 from delivery d
 left join del_data dd on dd."uuid" = d."uuid"
+where d."DeliveryDocumentType" = 'Unloading'
