@@ -1,0 +1,41 @@
+--таблица содержит все ЗнО, ворота для этих ЗнО, начало и окончание отгрузки по каждому зно и статус ЗнО
+with shippingtime as
+(
+	select
+		d."Gate"
+		, so."uuid"
+		, so."State"
+		, so."ShippingDate"
+		, min(case when lm."StartingDate" = '1970-01-01 00:00:00' then null else lm."StartingDate" end) as begining_time
+		, max(case when lm."CloseDate" = '1970-01-01 00:00:00' or lm."State" = 'Error' or so."State" != 'Shipped' then null else lm."CloseDate" end) end_time
+	from shippingorder so
+	left join delivery d on so."Delivery" = d."uuid"
+	left join locationmovement lm on lm."ReferenceDoc" = so."uuid"
+	where lm."OperationType_name" = 'Отгрузка' and so."State" != 'Canceled' and so."State" != 'Locked' 
+	group by (d."Gate", so."uuid", so."ShippingDate", so."State")
+),
+
+  --среднее время для ЗнО между датой отгрузки и началом/завершением отгузки
+avgtime as
+(
+	select
+		"Gate"
+		, avg(begining_time - "ShippingDate") plan_begining
+		, avg(end_time - "ShippingDate") plan_end
+	from shippingtime
+	where begining_time is not null
+	group by("Gate")
+)
+
+  --плановое/фактическое время начала/завершения работ по каждому доку (воторотам)
+select 
+	g."Code"
+	, min(case when st."State" != 'Shipped' then st."ShippingDate" end) + at.plan_begining as plan_begining
+	, max(st."ShippingDate") + at.plan_end as plan_end
+	, min(case when st."State" != 'Shipped' then st.begining_time end) fact_begining
+	, max(st.end_time) fact_end
+	, current_timestamp - max(end_time) difference
+from gate g
+left join shippingtime st on st."Gate" = g."uuid"
+left join avgtime at on at."Gate" = g."uuid"
+group by(g."Code", at.plan_end, at.plan_begining)
