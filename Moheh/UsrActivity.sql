@@ -4,6 +4,7 @@ select
 , "Queue"
 , count(*)
 from
+-- получения всех задач перемещения и пересчета с ОЗ, исполнителем и датой выполнения
 	(select lm."Date", lm."AssigneeRef", lmd."Queue" 
 	from locationmovement lm
 	left join locationmovementdatamart lmd on lmd."ObjectId" = lm."uuid"
@@ -21,4 +22,4 @@ from
 left join employee e on e."uuid" = "AssigneeRef"
 where e."Name" != 'System'
 group by date1, e."Name", "Queue"
-order by date1 desc
+order by date1 asc
