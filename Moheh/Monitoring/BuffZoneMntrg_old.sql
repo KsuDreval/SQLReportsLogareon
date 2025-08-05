@@ -1,10 +1,11 @@
 select
 	cfd."ZoneName"
 	, cfd."LocationName"
-	, cfd."LocationQuantity"
-	, sd."LocationName"
+	, case when  sd."Name" is null then 0
+    else 1 end as quantity
+	, sd."Name" as mh
 from cellfullnessdatamart cfd
-left join stockdatamart sd on cfd."LocationUUID" = sd."LocationParentUUID"
+left join location sd on cfd."LocationUUID" = sd."ParentID"
 where 
 cfd."ZoneUUID" = '67ce5af3-4cc2-4182-9fba-ca73aba4a7e1' --Буфер Зоны Экспедиции (Филиалы)
 or cfd."ZoneUUID" = 'baee2971-2e0b-4a46-95c4-c4ffef416844' --Буфер Зоны Экспедиции (Регионы)
