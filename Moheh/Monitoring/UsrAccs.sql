@@ -1,5 +1,6 @@
 select
 e."Name"
+-- если у пользователя есть хотя бы 1 задача в работе -> статус недоступен
 ,case
 	when count(case when tasks."StateName" = 'InWork' or tasks."StateName" = 'Recieved'then 1 end) > 0  then 'Недоступен'
 	else 'Доступен'
