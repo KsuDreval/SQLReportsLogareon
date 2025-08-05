@@ -1,8 +1,8 @@
 select
 	cfd."LocationName"
-	, sd."LocationName" as mh
+	, sd."Name" as mh
 from cellfullnessdatamart cfd
-left join stockdatamart sd on sd."LocationParentUUID" = cfd."LocationUUID"
+left join location sd on sd."ParentID" = cfd."LocationUUID"
 where
 cfd."LocationUUID" = '94475756-8696-4c28-a7a6-95f316b7a2f0' --Ворота отгрузки №1
 or cfd."LocationUUID" = '73ce2b4e-e5a4-4062-8893-9a74ddaa6f4c' --Ворота отгрузки №2
