@@ -7,7 +7,8 @@ sd."SKUName"
 , to_char(b."ManufactureDate", 'DD-MM-YY') as proizv
 , to_char(b."BestBefore", 'DD-MM-YY') as sg
 , sd."Quantity"
-, sd."Quantity" / p."pckg" as pckgq
+, round ( (sd."Quantity" / p."pckg")::numeric, 1) as pckgq
+-- если отсутствует имя родителя => мх - ячейка
 , case
   when sd."LocationParentName" = '' then sd."LocationName"
   else sd."LocationParentName" end as yach
@@ -15,6 +16,7 @@ sd."SKUName"
 , sd."ZoneName"
 from stockdatamart sd
 left join batch b on b."uuid" = sd."BatchUUID"
+-- таблица для получения кратности упаковки
 left join (select 
 	"SKU",
 	CASE
@@ -26,3 +28,6 @@ left join (select
 from package p
 group by "SKU") as p on p."SKU" = sd."SKUUUID"
 where sd."SKUArticle" != 'PredefinedSKU'
+and sd."ZoneName" != 'МХ без зоны'
+and sd."ZoneName" != 'Исполнители'
+order by sd."SKUName" asc
